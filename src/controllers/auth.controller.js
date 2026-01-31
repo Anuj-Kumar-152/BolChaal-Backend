@@ -50,12 +50,15 @@ export async function signup(req, res) {
       expiresIn: "7d",
     });
 
+    const isProd = process.env.NODE_ENV === "production";
+
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true, // prevent XSS attacks,
-      sameSite: "strict", // prevent CSRF attacks
-      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
     });
+
 
     res.status(201).json({ success: true, user: newUser });
   } catch (error) {
@@ -82,12 +85,15 @@ export async function login(req, res) {
       expiresIn: "7d",
     });
 
+    const isProd = process.env.NODE_ENV === "production";
+
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
-      httpOnly: true, // prevent XSS attacks,
-      sameSite: "strict", // prevent CSRF attacks
-      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: isProd ? "none" : "lax",
+      secure: isProd,
     });
+
 
     res.status(200).json({ success: true, user });
   } catch (error) {

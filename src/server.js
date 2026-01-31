@@ -11,16 +11,20 @@ import chatRoutes from "./routes/chat.route.js";
 import { connectDB } from "./lib/db.js";
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5000;
 
 const __dirname = path.resolve();
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
-    credentials: true, // allow frontend to send cookies
+    origin: [
+      "http://localhost:5173",
+      "https://your-frontend.onrender.com"
+    ],
+    credentials: true,
   })
 );
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -37,7 +41,8 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
+connectDB();
+
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  connectDB();
+  console.log(`Server running on port ${PORT}`);
 });
