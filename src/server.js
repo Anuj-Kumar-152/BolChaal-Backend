@@ -19,7 +19,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://your-frontend.onrender.com"
+      "https://bol-chaal-frontend.vercel.app"
     ],
     credentials: true,
   })
