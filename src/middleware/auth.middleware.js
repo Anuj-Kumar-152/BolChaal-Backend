@@ -3,29 +3,25 @@ import User from "../models/User.js";
 
 export const protectRoute = async (req, res, next) => {
   try {
-    const token = req.cookies.jwt;
+    const token = req.cookies?.jwt;
 
+    // 🔴 If no cookie → user simply not logged in
     if (!token) {
-      return res.status(401).json({ message: "Unauthorized - No token provided" });
+      return res.status(401).json({ message: "Not authorized" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-    if (!decoded) {
-      return res.status(401).json({ message: "Unauthorized - Invalid token" });
-    }
-
     const user = await User.findById(decoded.userId).select("-password");
 
     if (!user) {
-      return res.status(401).json({ message: "Unauthorized - User not found" });
+      return res.status(401).json({ message: "Not authorized" });
     }
 
     req.user = user;
-
     next();
   } catch (error) {
-    console.log("Error in protectRoute middleware", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    // 🔥 CRITICAL: NEVER return 500 for auth
+    return res.status(401).json({ message: "Not authorized" });
   }
 };
