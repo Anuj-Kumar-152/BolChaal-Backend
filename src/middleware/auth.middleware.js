@@ -3,9 +3,14 @@ import User from "../models/User.js";
 
 export const protectRoute = async (req, res, next) => {
   try {
-    const token = req.cookies?.jwt;
+    // Accept token from cookie (preferred) or Authorization header as fallback
+    let token = req.cookies?.jwt;
+    const authHeader = req.headers?.authorization;
+    if (!token && authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
 
-    // 🔴 If no cookie → user simply not logged in
+    // 🔴 If no token → user simply not logged in
     if (!token) {
       return res.status(401).json({ message: "Not authorized" });
     }
